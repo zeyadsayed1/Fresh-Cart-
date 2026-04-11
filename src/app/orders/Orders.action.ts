@@ -1,5 +1,6 @@
 "use server"
 
+import { BASE_URL } from "@/constants/api";
 import { getUserToken } from "@/app/myUtility";
 import { jwtDecode } from "jwt-decode";
 import { revalidatePath } from "next/cache";
@@ -12,7 +13,7 @@ export async function getUserOrders() {
         const decoded: any = jwtDecode(token as string);
         const userId = decoded.id;
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/orders/user/${userId}`, {
+        const response = await fetch(`${BASE_URL}/api/v1/orders/user/${userId}`, {
             method: "GET",
             headers: {
                 token: (token as string),

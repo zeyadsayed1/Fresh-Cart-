@@ -1,5 +1,6 @@
 "use server"
 
+import { BASE_URL } from "@/constants/api";
 import { getUserToken } from "@/app/myUtility";
 import { revalidatePath } from "next/cache";
 
@@ -7,7 +8,7 @@ export async function createCashOrder(cartId: string, shippingAddress: any) {
     try {
         const userToken = await getUserToken();
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/orders/${cartId}`, {
+        const response = await fetch(`${BASE_URL}/api/v1/orders/${cartId}`, {
             method: "POST",
             headers: {
                 token: (userToken as string),
@@ -33,7 +34,7 @@ export async function createOnlineOrder(cartId: string, shippingAddress: any, ba
     try {
         const userToken = await getUserToken();
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/orders/checkout-session/${cartId}?url=${baseUrl}`, {
+        const response = await fetch(`${BASE_URL}/api/v1/orders/checkout-session/${cartId}?url=${baseUrl}`, {
             method: "POST",
             headers: {
                 token: (userToken as string),

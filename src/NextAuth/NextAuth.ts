@@ -1,3 +1,4 @@
+import { BASE_URL } from "@/constants/api";
 import { NextAuthOptions } from "next-auth";
 import { jwtDecode } from "jwt-decode";
 import Credentials from "next-auth/providers/credentials";
@@ -14,7 +15,7 @@ export const nextAuthConfig: NextAuthOptions = {
       },
       authorize: async function (credentials) {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/signin`,
+          `${BASE_URL}/api/v1/auth/signin`,
           {
             method: "POST",
             headers: {
@@ -62,7 +63,7 @@ FacebookProvider({
         if (account?.provider === "google" || account?.provider === "facebook") {
           const secretPass = "Social_Login_Secure_123!";
           try {
-            let response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/signin`, {
+            let response = await fetch(`${BASE_URL}/api/v1/auth/signin`, {
               method: "POST",
               headers: { "content-type": "application/json" },
               body: JSON.stringify({ email: user.email, password: secretPass }),
@@ -70,7 +71,7 @@ FacebookProvider({
             let resData = await response.json();
 
             if (resData.message !== "success") {
-              const signupRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/signup`, {
+              const signupRes = await fetch(`${BASE_URL}/api/v1/auth/signup`, {
                 method: "POST",
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({

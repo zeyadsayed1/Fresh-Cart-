@@ -1,9 +1,10 @@
 "use server";
 
+import { BASE_URL } from "@/constants/api";
 import { getUserToken } from "@/app/myUtility";
 import { revalidatePath } from "next/cache";
 
-const BASE = process.env.NEXT_PUBLIC_BASE_URL;
+const BASE = BASE_URL;
 
 export async function addToWishlist(productId: string) {
   const token = await getUserToken();

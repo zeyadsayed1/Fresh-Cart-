@@ -1,5 +1,6 @@
 "use server"
 
+import { BASE_URL } from "@/constants/api";
 import { getUserToken } from "@/app/myUtility";
 import { productCart, ProductQty } from "./AddToCart.interface";
 import { revalidatePath } from "next/cache";
@@ -7,7 +8,7 @@ import { revalidatePath } from "next/cache";
 export async function handleAddProductToCart(data:productCart) {
     const userToken = await getUserToken();
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/cart`, {
+    const response = await fetch(`${BASE_URL}/api/v2/cart`, {
         method: "POST",
         headers: {
             token: (userToken as string) ?? "",
@@ -30,7 +31,7 @@ export async function handleAddProductToCart(data:productCart) {
 export async function handleProductQty(ProductQty:ProductQty,productId:string) {
     const userToken = await getUserToken();
    
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/cart/${productId}`, {
+    const response = await fetch(`${BASE_URL}/api/v2/cart/${productId}`, {
         method: "PUT",
         headers: {
             token: (userToken as string),
@@ -45,7 +46,7 @@ export async function handleProductQty(ProductQty:ProductQty,productId:string) {
 export async function removeProduct(productId:string) {
     const userToken = await getUserToken();
    
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/cart/${productId}`, {
+    const response = await fetch(`${BASE_URL}/api/v2/cart/${productId}`, {
         method: "DELETE",
         headers: {
             token: (userToken as string),
@@ -60,7 +61,7 @@ export async function removeProduct(productId:string) {
 export async function clearCart() {
     const userToken = await getUserToken();
    
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/cart`, {
+    const response = await fetch(`${BASE_URL}/api/v2/cart`, {
         method: "DELETE",
         headers: {
             token: (userToken as string),
@@ -74,7 +75,7 @@ export async function clearCart() {
 export async function getUserCart() {
     const userToken = await getUserToken();
     
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v2/cart`, {
+    const response = await fetch(`${BASE_URL}/api/v2/cart`, {
         method: "GET",
         headers: {
             token: (userToken as string),
