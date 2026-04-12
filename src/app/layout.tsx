@@ -26,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={exoFont.variable}>
-      <body className={`font-exo antialiased`}>
+    <html lang="en" className={exoFont.variable} suppressHydrationWarning>
+      <body className={`font-exo antialiased`} suppressHydrationWarning>
         <MySession>
           <ReduxProvider>
             <TopBar />

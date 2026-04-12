@@ -23,24 +23,21 @@ export default function SignInForm() {
   });
 
   async function onSubmit(data: zod.infer<typeof schemaSignIn>) {
-  
-   toast.promise(signIn("credentials", {
+    const res = await signIn("credentials", {
       ...data,
-     redirect: false,  
-  
-   }), {
-     loading: "Please wait ...",
-     success: function () {
-       
-       position:"top-right"
-       location.href = '/';
-       return "welcome to our store"
-     },
-     error: "Inccorect email or password ",
-        position:"top-right"
-        })
+      redirect: false,
+    });
 
-
+    if (res?.ok) {
+      toast.success("Welcome to our store", {
+        position: "top-right",
+      });
+      location.href = "/";
+    } else {
+      toast.error(res?.error || "Incorrect email or password", {
+        position: "top-right",
+      });
+    }
   }
 
   return (
