@@ -46,17 +46,17 @@ export const nextAuthConfig: NextAuthOptions = {
       },
     }),
 
-    ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET ? [
+    ...( (process.env.GOOGLE_CLIENT_ID || process.env.AUTH_GOOGLE_ID) && (process.env.GOOGLE_CLIENT_SECRET || process.env.AUTH_GOOGLE_SECRET) ? [
       GoogleProvider({
-        clientId: process.env.AUTH_GOOGLE_ID,
-        clientSecret: process.env.AUTH_GOOGLE_SECRET,
+        clientId: (process.env.GOOGLE_CLIENT_ID || process.env.AUTH_GOOGLE_ID) as string,
+        clientSecret: (process.env.GOOGLE_CLIENT_SECRET || process.env.AUTH_GOOGLE_SECRET) as string,
       })
     ] : []),
 
-    ...(process.env.AUTH_FACEBOOK_ID && process.env.AUTH_FACEBOOK_SECRET ? [
+    ...( (process.env.FACEBOOK_CLIENT_ID || process.env.AUTH_FACEBOOK_ID) && (process.env.FACEBOOK_CLIENT_SECRET || process.env.AUTH_FACEBOOK_SECRET) ? [
       FacebookProvider({
-        clientId: process.env.AUTH_FACEBOOK_ID,
-        clientSecret: process.env.AUTH_FACEBOOK_SECRET,
+        clientId: (process.env.FACEBOOK_CLIENT_ID || process.env.AUTH_FACEBOOK_ID) as string,
+        clientSecret: (process.env.FACEBOOK_CLIENT_SECRET || process.env.AUTH_FACEBOOK_SECRET) as string,
         authorization: {
           params: {
             scope: "email,public_profile",
