@@ -15,45 +15,55 @@ export const nextAuthConfig: NextAuthOptions = {
         password: { type: "password" },
       },
       authorize: async function (credentials) {
-        const response = await fetch(
-          `${BASE_URL}/api/v1/auth/signin`,
-          {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
+        try {
+          const response = await fetch(
+            `${BASE_URL}/api/v1/auth/signin`,
+            {
+              method: "POST",
+              headers: {
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
+                email: credentials?.email,
+                password: credentials?.password,
+              }),
             },
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password,
-            }),
-          },
-        );
-        const resData = await response.json();
-        const x: any = jwtDecode(resData.token);
+          );
+          const resData = await response.json();
 
-        if (resData.message === "success") {
-          const { role, ...userData } = resData.user;
-          return {...userData,id:x.id,userToken:resData.token};
+          if (resData.message === "success") {
+            const { role, ...userData } = resData.user;
+            const x: any = jwtDecode(resData.token);
+            return { ...userData, id: x.id, userToken: resData.token };
+          }
+
+          console.error("Login failed:", resData.message);
+          return null;
+        } catch (error) {
+          console.error("NextAuth Authorize Error:", error);
+          return null;
         }
-
-        return null;
       },
     }),
 
-GoogleProvider({
-  clientId: process.env.AUTH_GOOGLE_ID!,
-  clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-}),
+    ...(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET ? [
+      GoogleProvider({
+        clientId: process.env.AUTH_GOOGLE_ID,
+        clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      })
+    ] : []),
 
-FacebookProvider({
-  clientId: process.env.AUTH_FACEBOOK_ID!,
-  clientSecret: process.env.AUTH_FACEBOOK_SECRET!,
-  authorization: {
-    params: {
-      scope: "email,public_profile",
-    },
-  },
-})
+    ...(process.env.AUTH_FACEBOOK_ID && process.env.AUTH_FACEBOOK_SECRET ? [
+      FacebookProvider({
+        clientId: process.env.AUTH_FACEBOOK_ID,
+        clientSecret: process.env.AUTH_FACEBOOK_SECRET,
+        authorization: {
+          params: {
+            scope: "email,public_profile",
+          },
+        },
+      })
+    ] : [])
   ],
   pages: { signIn: "/signin" },
   callbacks: {
