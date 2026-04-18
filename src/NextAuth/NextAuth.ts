@@ -65,6 +65,18 @@ export const nextAuthConfig: NextAuthOptions = {
       })
     ] : [])
   ],
+  debug: process.env.NODE_ENV === "development" || true,
+  logger: {
+    error(code, metadata) {
+      console.error(`[next-auth][error][${code}]`, metadata);
+    },
+    warn(code) {
+      console.warn(`[next-auth][warn][${code}]`);
+    },
+    debug(code, metadata) {
+      console.log(`[next-auth][debug][${code}]`, metadata);
+    },
+  },
   pages: { signIn: "/signin" },
   callbacks: {
     jwt: async function ({ user, token, account }: any) {
