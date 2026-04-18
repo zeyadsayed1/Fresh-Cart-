@@ -34,7 +34,11 @@ export default function SignInForm() {
       });
       location.href = "/";
     } else {
-      toast.error(res?.error || "Incorrect email or password", {
+      const errorMessage = res?.error === "CredentialsSignin" 
+        ? "Incorrect email or password" 
+        : res?.error || "An error occurred during sign in";
+        
+      toast.error(errorMessage, {
         position: "top-right",
       });
     }
