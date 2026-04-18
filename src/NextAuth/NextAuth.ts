@@ -6,7 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
 
 export const nextAuthConfig: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   providers: [
     Credentials({
       name: "signin",
@@ -130,3 +130,9 @@ export const nextAuthConfig: NextAuthOptions = {
     },
   },
 };
+
+if (!nextAuthConfig.secret) {
+  console.warn("[next-auth][warn] NEXTAUTH_SECRET is missing! Production authentication will fail.");
+} else {
+  console.log("[next-auth][info] NEXTAUTH_SECRET is present.");
+}
