@@ -94,6 +94,7 @@ export const nextAuthConfig: NextAuthOptions = {
             let resData = await response.json();
 
             if (resData.message !== "success") {
+              console.log(`[next-auth][info] Social login signin failed for ${user.email}, attempting signup...`);
               const signupRes = await fetch(`${BASE_URL}/api/v1/auth/signup`, {
                 method: "POST",
                 headers: { "content-type": "application/json" },
@@ -108,12 +109,16 @@ export const nextAuthConfig: NextAuthOptions = {
               const signupData = await signupRes.json();
               if (signupData.message === "success") {
                 token.credentialToken = signupData.token;
+                console.log(`[next-auth][info] Social login signup successful for ${user.email}`);
+              } else {
+                console.error(`[next-auth][error] Social login signup failed for ${user.email}:`, signupData.message);
               }
             } else {
               token.credentialToken = resData.token;
+              console.log(`[next-auth][info] Social login synced successfully for ${user.email}`);
             }
           } catch (e) {
-            console.error("Backend sync failed:", e);
+            console.error(`[next-auth][error] Backend sync failed for ${user.email}:`, e);
           }
         } else {
           token.credentialToken = user.userToken;

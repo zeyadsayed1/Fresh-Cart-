@@ -7,11 +7,14 @@ import { revalidatePath } from "next/cache";
 
 export async function handleAddProductToCart(data:productCart) {
     const userToken = await getUserToken();
+    if (!userToken) {
+        throw new Error("Cart requires backend sync. If you are using social login and see this, please try signing in with your email and password.");
+    }
 
     const response = await fetch(`${BASE_URL}/api/v2/cart`, {
         method: "POST",
         headers: {
-            token: (userToken as string) ?? "",
+            token: userToken,
             "Content-Type":"application/json"
         },
         body:JSON.stringify(data)   
@@ -73,16 +76,33 @@ export async function clearCart() {
 }
 
 export async function getUserCart() {
-    const userToken = await getUserToken();
-    
-    const response = await fetch(`${BASE_URL}/api/v2/cart`, {
-        method: "GET",
-        headers: {
-            token: (userToken as string),
-        },
-        cache: "no-store",
-    })
-    const {data:{totalCartPrice,products},cartId,numOfCartItems } = await response.json();
-  
- return {numOfCartItems, cartId,totalCartPrice,products }
+    try {
+        const userToken = await getUserToken();
+        if (!userToken) {
+            return { numOfCartItems: 0, cartId: null, totalCartPrice: 0, products: [] };
+        }
+        
+        const response = await fetch(`${BASE_URL}/api/v2/cart`, {
+            method: "GET",
+            headers: {
+                token: userToken,
+            },
+            cache: "no-store",
+        })
+        
+        if (!response.ok) {
+            return { numOfCartItems: 0, cartId: null, totalCartPrice: 0, products: [] };
+        }
+
+        const resJson = await response.json();
+        const numOfCartItems = resJson?.numOfCartItems ?? 0;
+        const cartId = resJson?.cartId ?? null;
+        const totalCartPrice = resJson?.data?.totalCartPrice ?? 0;
+        const products = resJson?.data?.products ?? [];
+      
+        return { numOfCartItems, cartId, totalCartPrice, products }
+    } catch (error) {
+        console.error("getUserCart error:", error);
+        return { numOfCartItems: 0, cartId: null, totalCartPrice: 0, products: [] };
+    }
 }

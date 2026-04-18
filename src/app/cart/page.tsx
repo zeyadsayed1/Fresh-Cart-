@@ -9,6 +9,9 @@ import HandleProductQuntity from '../_Components/AddToCart/HandleProductQuntity'
 import RemoveProduct from '../_Components/RemoveProduct/RemoveProduct';
 import ClearCartButton from '../_Components/ClearCart/ClearCartButton';
 import CartCheckoutButton from '../_Components/CartCheckoutButton';
+import { getServerSession } from "next-auth";
+import { nextAuthConfig } from "@/NextAuth/NextAuth";
+import { AlertCircle } from 'lucide-react';
 
 const TruckIcon = ({ className }: { className?: string }) => (
   <svg width="23" height="17" viewBox="0 0 23 17" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -29,6 +32,9 @@ const CartHeaderIcon = () => (
 );
 
 export default async function CartPage() {
+  const session = await getServerSession(nextAuthConfig);
+  const isSocialMissingToken = session && !(session as any).user?.credentialToken;
+  
   const { numOfCartItems, cartId, totalCartPrice, products, } = await getUserCart()
   const subtotal = totalCartPrice || 0;
   const FREE_SHIPPING_THRESHOLD = 500;
@@ -59,6 +65,22 @@ export default async function CartPage() {
             </p>
           </div>
         </div>
+
+        {isSocialMissingToken && (
+          <div className="mb-8 bg-amber-50 border border-amber-200 rounded-2xl p-5 flex gap-4 items-start shadow-sm">
+            <div className="bg-amber-100 p-2 rounded-full text-amber-600 shrink-0">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-amber-900 font-bold mb-1">Session Sync Required</h3>
+              <p className="text-amber-800 text-sm leading-relaxed">
+                It looks like your social login session isn't fully synced with our store. 
+                To use the shopping cart and checkout, please try <strong>signing out and signing in again</strong>. 
+                If the issue persists, we recommend signing in with your email and password.
+              </p>
+            </div>
+          </div>
+        )}
 
         {(!products || products.length === 0) ? (
      
